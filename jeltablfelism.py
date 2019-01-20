@@ -11,7 +11,6 @@ SIGNS_LOOKUP = {
         (0, 1, 0, 0): 'Haladj egyenesen',
         (1, 0, 1, 1): 'Fordulj vissza', 
 }
-
 camera = cv2.VideoCapture(0)
 
 def defineTrafficSign(image):
@@ -42,7 +41,6 @@ def defineTrafficSign(image):
         kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (1, 5))
         thresh = cv2.morphologyEx(thresh, cv2.MORPH_OPEN, kernel)
 
-
         # (roiH, roiW) = roi.shape
         #subHeight = thresh.shape[0]/10
         #subWidth = thresh.shape[1]/10
@@ -58,14 +56,15 @@ def defineTrafficSign(image):
         leftBlock = thresh[4*subHeight:9*subHeight, subWidth:3*subWidth]
         centerBlock = thresh[4*subHeight:9*subHeight, 4*subWidth:6*subWidth]
         rightBlock = thresh[4*subHeight:9*subHeight, 7*subWidth:9*subWidth]
-        topBlock = thresh[2*subHeight:4*subHeight, 3*subWidth:7*subWidth]        
+        topBlock = thresh[2*subHeight:4*subHeight, 3*subWidth:7*subWidth]  
+        
         leftFraction = np.sum(leftBlock)/(leftBlock.shape[0]*leftBlock.shape[1])
         centerFraction = np.sum(centerBlock)/(centerBlock.shape[0]*centerBlock.shape[1])
         rightFraction = np.sum(rightBlock)/(rightBlock.shape[0]*rightBlock.shape[1])
         topFraction = np.sum(topBlock)/(topBlock.shape[0]*topBlock.shape[1])
+        
         segments = (leftFraction, centerFraction, rightFraction, topFraction)
         segments = tuple(1 if segment > 230 else 0 for segment in segments)
-
         
 
         if segments in SIGNS_LOOKUP:
@@ -73,8 +72,6 @@ def defineTrafficSign(image):
             return SIGNS_LOOKUP[segments]
         else:
             return None
-
-
         
 while True:
         (grabbed, frame) = camera.read()
